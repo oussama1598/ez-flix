@@ -21,13 +21,15 @@ export const searchForEpisode = (name, _season, _from, _to) => {
             .sortBy('episodes')
             .filter(ep => (
               ep.episode >= from &&
-          ep.episode <= to
+              ep.episode <= to
             ))
             .forEach(ep => {
-              if (!ep.torrents[0]) return
+              if (ep.torrents.length === 0) return
 
-              console.log(`Added ${ep.episode} from ${name}`)
-              addTorrent(ep.torrents[0].magnet, DIR, session)
+              const torrent = _.sortBy(ep.torrents, ep => -ep.seeds)[0]
+
+              console.log(`Added ${ep.episode} from ${name} (${torrent.quality})`)
+              addTorrent(torrent.magnet, DIR, session)
             })
         })
     })

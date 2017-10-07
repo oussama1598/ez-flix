@@ -1,10 +1,16 @@
 import request from 'request-promise'
 
-const ENDPOINT = 'http://api.tvmaze.com/singlesearch/shows?q=%query%'
+const ENDPOINT = 'https://showsdb-api.herokuapp.com/api/show/'
 
-export const getShowId = (name, id = 'imdb') =>
-  request({
-    uri: ENDPOINT.replace('%query%', name),
+const fixTitle = title =>
+  title.replace(/\.|'| /g, '-')
+
+export const getShowId = (name, id = 'imdb') => {
+  console.log(`Searching for ${fixTitle(name)}`)
+
+  return request({
+    uri: `${ENDPOINT}${fixTitle(name)}`,
     json: true
   })
     .then(data => data.externals[id])
+}
