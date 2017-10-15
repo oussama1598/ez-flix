@@ -24,8 +24,10 @@
     "debug": "^3.1.0",
     "eslint": "^4.8.0",
     "eslint-config-standard": "^10.2.1",
+    "inquirer": "^3.3.0",
     "request-promise": "^4.2.2",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "x-ray": "^2.3.2"
   },
   "bin": {
     "ezflix": "index.js"

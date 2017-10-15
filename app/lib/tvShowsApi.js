@@ -18,21 +18,13 @@ const parseEpisode = episode => ({
   })).sortBy(item => item.size).value()
 })
 
-const parseSeason = (data, episodeNumber) =>
+export const parseSeason = data =>
   _.chain(data)
     .map(episode => parseEpisode(episode))
-    .filter(item =>
-      Object.keys(item.torrents).length > 0 &&
-      (episodeNumber ? parseInt(item.episode, 10) === episodeNumber : true)
-    )
     .sortBy(item => item.episode)
     .value()
 
-export const getTorrents = (imdb, _season, _episode) => {
-  const season = parseInt(_season, 10)
-  const episode = parseInt(_episode, 10)
-  if (!season) return Promise.reject(new Error('Season is required'))
-
+export const getTorrents = imdb => {
   const Uri = new URL(ENDPOINT)
   Uri.searchParams.append('imdb', imdb)
 
@@ -42,12 +34,7 @@ export const getTorrents = (imdb, _season, _episode) => {
   })
     .then(data => {
       if (!data) return Promise.reject(new Error('Nothing found :('))
-      if (!data[season]) {
-        return Promise.reject(new Error('Season cannot be found'))
-      }
 
-      if (episode) return parseSeason(data[season], episode)[0]
-
-      return parseSeason(data[season])
+      return data
     })
 }
