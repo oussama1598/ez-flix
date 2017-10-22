@@ -2,7 +2,7 @@ import request from 'request-promise'
 import Xray from 'x-ray'
 import { URL } from 'url'
 
-const ENDPOINT = 'https://showsdb-api.herokuapp.com/api/show/'
+const ENDPOINT = 'https://sheltered-eyrie-10438.herokuapp.com/api/show/'
 const TRAKT_END_POINT = 'https://trakt.tv/search'
 
 const x = Xray()

@@ -4,8 +4,14 @@ import { getTorrents, parseSeason } from '../lib/tvShowsApi'
 import { addTorrent, getSession } from '../lib/transmission'
 import { prompt } from 'inquirer'
 import { parse } from 'url'
+import filesize from 'filesize'
 
 const DIR = '/home/oussama/Desktop/TV_SHOWS'
+
+const promiseAsync = arrOfPromises =>
+  arrOfPromises.reduce((result, provider, index) => {
+    return result.then(() => provider())
+  }, Promise.resolve())
 
 export const searchForEpisode = (name, _from, _to) =>
   getSession()
@@ -45,21 +51,30 @@ export const searchForEpisode = (name, _from, _to) =>
           const to = isNaN(_to) || _to === 'f'
             ? _.sortBy(results, ep => -ep.episode)[0].episode
             : _to
-
-          _.chain(results)
+          const episodes = _.chain(results)
             .sortBy('episodes')
             .filter(ep => (
               ep.episode >= from &&
               ep.episode <= to
-            ))
-            .forEach(ep => {
-              if (ep.torrents.length === 0) return
+            )).value().map(
+              ep => () => {
+                const torrents = _.chain(ep.torrents)
+                  .sortBy(ep => -ep.seeds)
+                  .value()
 
-              const torrent = _.sortBy(ep.torrents, ep => -ep.seeds)[0]
+                return prompt({
+                  type: 'list',
+                  name: 'episode',
+                  message: 'Select a file: ',
+                  choices: torrents.map(file => ({
+                    name: `${file.file} (${file.quality}), seeds: ${file.seeds}, size: ${filesize(file.size)}`,
+                    value: file.magnet
+                  }))})
+                  .then(result => addTorrent(result.episode, DIR, session))
+              }
+            )
 
-              console.log(`Added ${ep.episode} from ${name} (${torrent.quality})`)
-              addTorrent(torrent.magnet, DIR, session)
-            })
+          return promiseAsync(episodes)
         })
     })
     .catch(console.log)
