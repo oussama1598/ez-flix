@@ -1,10 +1,9 @@
 import _ from 'underscore'
-import { getShowId, searchForShow } from '../lib/tvshowsData'
-import { getTorrents, parseSeason } from '../lib/tvShowsApi'
+import { searchForShow } from '../lib/tvshowsData'
+import { getEpisodes, parseSeason } from '../lib/eztv'
 import { addTorrent, getSession } from '../lib/transmission'
 import { prompt } from 'inquirer'
 import { parse } from 'url'
-import filesize from 'filesize'
 
 const DIR = '/home/oussama/Desktop/TV_SHOWS'
 
@@ -32,8 +31,7 @@ export const searchForEpisode = (name, _from, _to) =>
             }))
           })
         })
-        .then(result => getShowId(result.show))
-        .then(imdb => getTorrents(imdb))
+        .then(({ show }) => getEpisodes(show))
         .then(results => {
           return prompt({
             type: 'list',
@@ -51,11 +49,12 @@ export const searchForEpisode = (name, _from, _to) =>
           const to = isNaN(_to) || _to === 'f'
             ? _.sortBy(results, ep => -ep.episode)[0].episode
             : _to
+
           const episodes = _.chain(results)
             .sortBy('episodes')
             .filter(ep => (
               ep.episode >= from &&
-              ep.episode <= to
+            ep.episode <= to
             )).value().map(
               ep => () => {
                 const torrents = _.chain(ep.torrents)
@@ -67,7 +66,7 @@ export const searchForEpisode = (name, _from, _to) =>
                   name: 'episode',
                   message: 'Select a file: ',
                   choices: torrents.map(file => ({
-                    name: `${file.file} (${file.quality}), seeds: ${file.seeds}, size: ${filesize(file.size)}`,
+                    name: `${file.name}, seeds: ${file.seeds}, size: ${file.size}`,
                     value: file.magnet
                   }))})
                   .then(result => addTorrent(result.episode, DIR, session))
