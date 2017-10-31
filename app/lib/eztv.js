@@ -14,7 +14,7 @@ const formatResults = (results, query) => {
   results.forEach(ep => {
     const name = ep.name.toLowerCase()
     const regex = /(s\d{2,}e\d{2,})|(\d{1,}x\d{2,})/g
-    if (ep.showUrl.indexOf(query) < 0) return
+    if (ep.episodeUrl.indexOf(query) < 0) return
 
     if (regex.test(name)) {
       const parsedName = name.match(regex)[0].split(/x|e/g)
@@ -51,7 +51,7 @@ const formatResults = (results, query) => {
 export const getEZTVData = query =>
   new Promise((resolve, reject) => {
     x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
-      showUrl: 'td:nth-child(1) a@href',
+      episodeUrl: 'td:nth-child(2) a@href',
       name: 'td:nth-child(2) | trim',
       magnet: 'td:nth-child(3) a:nth-child(1)@href',
       size: 'td:nth-child(4)',
