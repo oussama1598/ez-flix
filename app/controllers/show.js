@@ -16,7 +16,7 @@ export async function searchForEpisode (name, _from, _to = 'f', byPassSearch = f
 
   let showName = name.replace(/ /g, '-')
 
-  if (byPassSearch) {
+  if (!byPassSearch) {
     const shows = await searchForShow(showName)
 
     if (shows.length === 0) throw new Error('No matches for this show')

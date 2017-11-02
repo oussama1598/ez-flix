@@ -1,5 +1,6 @@
 import program from 'commander'
 import { searchForEpisode } from './controllers/show'
+import { isBoolean } from 'util'
 
 const parseINT = val => parseInt(val)
 
@@ -8,7 +9,7 @@ program
   .usage('[options] <name>')
   .option('-f, --from <n>', 'From a specific episode', parseINT, 1)
   .option('-t, --to <n>', 'To a specific episode', parseINT, 'f')
-  .option('-ns --nosearch', 'Bypass traktv shows search', false)
+  .option('-n, --nosearch', 'Bypass traktv shows search')
   .parse(process.argv);
 
 (async function () {
