@@ -1,4 +1,5 @@
 import Xray from 'x-ray'
+import { promisify } from 'bluebird'
 
 const URL = 'https://eztv.ag/search'
 const x = Xray({
@@ -7,7 +8,8 @@ const x = Xray({
     trim: val => val.trim()
   }
 })
-const formatResults = (results, query) => {
+
+function formatResults (results, query) {
   const episodes = {}
   const seasons = {}
 
@@ -48,28 +50,20 @@ const formatResults = (results, query) => {
   return seasons
 }
 
-export const getEZTVData = query =>
-  new Promise((resolve, reject) => {
-    x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
-      episodeUrl: 'td:nth-child(2) a@href',
-      name: 'td:nth-child(2) | trim',
-      magnet: 'td:nth-child(3) a:nth-child(1)@href',
-      size: 'td:nth-child(4)',
-      seeds: 'td:nth-child(6) | int'
-    }])((err, results) => {
-      if (err) reject(err)
-      resolve(results)
-    })
-  })
+export function getEZTVData (query) {
+  return promisify(x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
+    episodeUrl: 'td:nth-child(2) a@href',
+    name: 'td:nth-child(2) | trim',
+    magnet: 'td:nth-child(3) a:nth-child(1)@href',
+    size: 'td:nth-child(4)',
+    seeds: 'td:nth-child(6) | int'
+  }]))
+}
 
-export const getEpisodes = query =>
-  getEZTVData(query)
-    .then(results => {
-      if (results.length === 0) {
-        return Promise.reject(
-          new Error('No episodes found')
-        )
-      }
+export async function getEpisodes (query) {
+  const data = await getEZTVData(query)
 
-      return formatResults(results, query)
-    })
+  if (data.length === 0) throw new Error('no Episodes Found')
+
+  return formatResults(data, query)
+}

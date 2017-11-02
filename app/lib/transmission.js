@@ -3,8 +3,8 @@ import cheerio from 'cheerio'
 
 const RPC = 'http://localhost:9091/transmission/rpc/'
 
-export const addTorrent = (magnet, uri, session) =>
-  request({
+export function addTorrent (magnet, uri, session) {
+  return request({
     uri: RPC,
     method: 'POST',
     headers: {
@@ -19,15 +19,18 @@ export const addTorrent = (magnet, uri, session) =>
       }
     }
   })
+}
 
-export const getSession = () =>
-  request({
+export async function getSession () {
+  const res = await request({
     uri: RPC,
     method: 'POST'
-  })
-    .catch(res => {
-      if (res.statusCode !== 409) return Promise.reject(res)
+  }).catch(res => res)
 
-      const $ = cheerio.load(res.message)
-      return $('code').text().replace('X-Transmission-Session-Id: ', '')
-    })
+  if (res.statusCode !== 409) throw new Error('Transmission is not running')
+
+  const $ = cheerio.load(res.message)
+  return $('code')
+    .text()
+    .replace('X-Transmission-Session-Id: ', '')
+}
