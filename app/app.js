@@ -8,6 +8,7 @@ program
   .usage('[options] <name>')
   .option('-f, --from <n>', 'From a specific episode', parseINT, 1)
   .option('-t, --to <n>', 'To a specific episode', parseINT, 'f')
+  .option('-ns --nosearch', 'Bypass traktv shows search', false)
   .parse(process.argv);
 
 (async function () {
@@ -18,7 +19,8 @@ program
       await searchForEpisode(
         program.args[0],
         program.from,
-        program.to
+        program.to,
+        program.nosearch
       )
     } catch (error) {
       console.log(error.message)

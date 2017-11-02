@@ -1,5 +1,4 @@
 import Xray from 'x-ray'
-import { promisify } from 'bluebird'
 
 const URL = 'https://eztv.ag/search'
 const x = Xray({
@@ -51,13 +50,19 @@ function formatResults (results, query) {
 }
 
 export function getEZTVData (query) {
-  return promisify(x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
-    episodeUrl: 'td:nth-child(2) a@href',
-    name: 'td:nth-child(2) | trim',
-    magnet: 'td:nth-child(3) a:nth-child(1)@href',
-    size: 'td:nth-child(4)',
-    seeds: 'td:nth-child(6) | int'
-  }]))
+  return new Promise((resolve, reject) =>
+    x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
+      episodeUrl: 'td:nth-child(2) a@href',
+      name: 'td:nth-child(2) | trim',
+      magnet: 'td:nth-child(3) a:nth-child(1)@href',
+      size: 'td:nth-child(4)',
+      seeds: 'td:nth-child(6) | int'
+    }])((err, result) => {
+      if (err) reject(err)
+
+      resolve(result)
+    })
+  )
 }
 
 export async function getEpisodes (query) {

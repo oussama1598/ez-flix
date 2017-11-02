@@ -7,26 +7,36 @@ import { parse } from 'url'
 
 const DIR = '/home/oussama/Desktop/TV_SHOWS'
 
-export async function searchForEpisode (name, _from, _to = 'f') {
+export async function searchForEpisode (name, _from, _to = 'f', byPassSearch = false) {
   const from = isNaN(_from) ? 1 : _from
   const to = isNaN(_to) || _to === 'f'
     ? Infinity
     : _to
   const session = await getSession()
-  const shows = await searchForShow(name)
 
-  if (shows.length === 0) throw new Error('No matches for this show')
+  let showName = name.replace(/ /g, '-')
 
-  const showsPrompt = await prompt({
-    type: 'list',
-    name: 'show',
-    message: 'Here is what i found',
-    choices: shows.slice(0, 5).map(show => ({
-      name: `${show.name.trim()} (${show.url})`,
-      value: parse(show.url).pathname.split('/')[2]
-    }))
-  })
-  const seasons = await getEpisodes(showsPrompt.show)
+  if (byPassSearch) {
+    const shows = await searchForShow(showName)
+
+    if (shows.length === 0) throw new Error('No matches for this show')
+
+    const showsPrompt = await prompt({
+      type: 'list',
+      name: 'show',
+      message: 'Here is what i found',
+      choices: shows.slice(0, 5).map(show => ({
+        name: `${show.name.trim()} (${show.url})`,
+        value: parse(show.url).pathname.split('/')[2]
+      }))
+    })
+
+    showName = showsPrompt.show
+  }
+  const seasons = await getEpisodes(showName)
+
+  if (Object.keys(seasons).length === 0) throw new Error('No data found for this show')
+
   const seasonsPrompt = await prompt({
     type: 'list',
     name: 'season',
