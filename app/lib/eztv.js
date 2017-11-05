@@ -69,8 +69,6 @@ export function getEZTVData (query) {
 
 export async function getEpisodes (query) {
   const data = await getEZTVData(query)
-
-  if (data.length === 0) throw new Error('No episodes found')
-
+  
   return formatResults(data, query)
 }

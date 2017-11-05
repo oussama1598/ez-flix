@@ -27,7 +27,7 @@ export async function getSession () {
     method: 'POST'
   }).catch(res => res)
 
-  if (res.statusCode !== 409) throw new Error('Transmission is not running')
+  if (res.statusCode !== 409) return null
 
   const $ = cheerio.load(res.message)
   return $('code')

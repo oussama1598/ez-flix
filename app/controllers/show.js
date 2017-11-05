@@ -55,12 +55,14 @@ export async function searchForEpisode (name, from, to = 'f', byPassSearch = fal
 
   const session = await getSession()
 
+  if (!session) return console.log('Transmission is not running')
+
   let showName = name.replace(/ /g, '-')
 
   if (!byPassSearch) {
     const shows = await searchForShow(showName)
 
-    if (shows.length === 0) throw new Error('No matches for this show')
+    if (shows.length === 0) return console.log('No matches for this show')
 
     const showsPrompt = await prompt({
       type: 'list',
@@ -77,7 +79,7 @@ export async function searchForEpisode (name, from, to = 'f', byPassSearch = fal
 
   const seasons = await getEpisodes(showName)
 
-  if (Object.keys(seasons).length === 0) throw new Error('No data found for this show')
+  if (Object.keys(seasons).length === 0) return console.log('No data found for this show')
 
   const chosenSeason = from === 'latest'
     ? Object.keys(seasons).reduce((a, b) => parseInt(a) > parseInt(b) ? a : b, 0)
