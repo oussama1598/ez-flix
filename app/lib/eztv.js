@@ -9,13 +9,10 @@ const x = Xray({
 })
 
 function formatResults (results, query) {
-  const episodes = {}
-  const seasons = {}
-
-  results.forEach(ep => {
+  const episodes = results.reduce((episodesObject, ep) => {
     const name = ep.name.toLowerCase()
     const regex = /(s\d{2,}e\d{2,})|(\d{1,}x\d{2,})/g
-    if (ep.episodeUrl.indexOf(query) < 0) return
+    if (ep.episodeUrl.indexOf(query) < 0) return episodesObject
 
     if (regex.test(name)) {
       const parsedName = name.match(regex)[0].split(/x|e/g)
@@ -26,27 +23,32 @@ function formatResults (results, query) {
         parsedName[1]
       )
 
-      if (!episodes[season]) episodes[season] = {}
-      if (!episodes[season][episode]) {
-        episodes[season][episode] = {
+      if (!episodesObject[season]) episodesObject[season] = {}
+      if (!episodesObject[season][episode]) {
+        episodesObject[season][episode] = {
           season,
           episode,
           torrents: []
         }
       }
 
-      episodes[season][episode].torrents.push(ep)
+      episodesObject[season][episode].torrents.push(ep)
+
+      return episodesObject
     }
-  })
+  }, {})
 
-  Object.keys(episodes).forEach(key => {
+  return Object.keys(episodes).reduce((seasons, key) => {
     seasons[key] = []
-    Object.keys(episodes[key]).forEach(ep => {
-      seasons[key].push(episodes[key][ep])
-    })
-  })
 
-  return seasons
+    Object.keys(episodes[key]).reduce((s, ep) => {
+      s.push(episodes[key][ep])
+
+      return s
+    }, seasons[key])
+
+    return seasons
+  }, {})
 }
 
 export function getEZTVData (query) {
@@ -68,7 +70,7 @@ export function getEZTVData (query) {
 export async function getEpisodes (query) {
   const data = await getEZTVData(query)
 
-  if (data.length === 0) throw new Error('no Episodes Found')
+  if (data.length === 0) throw new Error('No episodes found')
 
   return formatResults(data, query)
 }

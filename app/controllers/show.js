@@ -7,11 +7,52 @@ import { parse } from 'url'
 
 const DIR = '/home/oussama/Desktop/TV_SHOWS'
 
-export async function searchForEpisode (name, _from, _to = 'f', byPassSearch = false) {
-  const from = isNaN(_from) ? 1 : _from
-  const to = isNaN(_to) || _to === 'f'
+async function filesPrompt (episodes, session) {
+  for (const ep of episodes) {
+    const torrents = _.chain(ep.torrents)
+      .sortBy(ep => -ep.seeds)
+      .value()
+
+    if (torrents.length === 0) {
+      console.log(`Skipped episode ${ep.episode}, no torrents found`)
+      continue
+    }
+
+    const episodePrompt = await prompt({
+      type: 'list',
+      name: 'magnet',
+      message: 'Select a file: ',
+      choices: torrents.map(file => ({
+        name: `${file.name}, seeds: ${file.seeds}, size: ${file.size}`,
+        value: file.magnet
+      }))})
+
+    addTorrent(episodePrompt.magnet, DIR, session)
+  }
+}
+
+async function seasonsPrompt (seasons) {
+  const seasonPrompt = await prompt({
+    type: 'list',
+    name: 'season',
+    message: 'Seasons: ',
+    choices: Object.keys(seasons).map(season => ({
+      name: `season ${season}`,
+      value: season
+    }))
+  })
+
+  return seasonPrompt.season
+}
+
+export async function searchForEpisode (name, from, to = 'f', byPassSearch = false) {
+  from = isNaN(from) && from !== 'latest' ? 1 : from
+  to = isNaN(to) || to === 'f' || from === 'latest'
     ? Infinity
-    : _to
+    : to
+
+  if (from === 'latest') console.log('the \'-to\' argument will be ignored, since \'latest\' is used')
+
   const session = await getSession()
 
   let showName = name.replace(/ /g, '-')
@@ -33,42 +74,26 @@ export async function searchForEpisode (name, _from, _to = 'f', byPassSearch = f
 
     showName = showsPrompt.show
   }
+
   const seasons = await getEpisodes(showName)
 
   if (Object.keys(seasons).length === 0) throw new Error('No data found for this show')
 
-  const seasonsPrompt = await prompt({
-    type: 'list',
-    name: 'season',
-    message: 'Seasons: ',
-    choices: Object.keys(seasons).map(season => ({
-      name: `season ${season}`,
-      value: season
-    }))
-  })
-  const episodes = _.chain(seasons[seasonsPrompt.season])
+  const chosenSeason = from === 'latest'
+    ? Object.keys(seasons).reduce((a, b) => parseInt(a) > parseInt(b) ? a : b, 0)
+    : await seasonsPrompt(seasons)
+  const season = seasons[chosenSeason]
+
+  from = from === 'latest'
+    ? season.reduce((a, b) => a.episode > b.episode ? a.episode : b.episode)
+    : parseInt(from)
+
+  const episodes = _.chain(season)
     .sortBy('episodes')
     .filter(ep => (
       ep.episode >= from &&
-              ep.episode <= to
+          ep.episode <= to
     )).value()
 
-  for (const ep of episodes) {
-    const torrents = _.chain(ep.torrents)
-      .sortBy(ep => -ep.seeds)
-      .value()
-
-    if (torrents.length === 0) continue
-
-    const episodePrompt = await prompt({
-      type: 'list',
-      name: 'magnet',
-      message: 'Select a file: ',
-      choices: torrents.map(file => ({
-        name: `${file.name}, seeds: ${file.seeds}, size: ${file.size}`,
-        value: file.magnet
-      }))})
-
-    addTorrent(episodePrompt.magnet, DIR, session)
-  }
+  await filesPrompt(episodes, session)
 }
