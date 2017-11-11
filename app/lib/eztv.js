@@ -69,6 +69,6 @@ export function getEZTVData (query) {
 
 export async function getEpisodes (query) {
   const data = await getEZTVData(query)
-  
+
   return formatResults(data, query)
 }
