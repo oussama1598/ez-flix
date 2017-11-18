@@ -5,7 +5,6 @@ import { addTorrent, getSession } from '../lib/transmission'
 import { prompt } from 'inquirer'
 import { parse } from 'url'
 import error from 'console-error'
-import info from 'console-info'
 import warn from 'console-warn'
 
 const DIR = process.cwd()

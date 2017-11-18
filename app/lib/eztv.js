@@ -9,7 +9,7 @@ const x = Xray({
 })
 
 function formatResults (results, query) {
-  const episodes = results.reduce((episodesObject, ep) => {
+  const episodes = results.reduce((episodesObject = {}, ep) => {
     const name = ep.name.toLowerCase()
     const regex = /(s\d{2,}e\d{2,})|(\d{1,}x\d{2,})/g
     if (ep.episodeUrl.indexOf(query) < 0) return episodesObject
@@ -33,7 +33,6 @@ function formatResults (results, query) {
       }
 
       episodesObject[season][episode].torrents.push(ep)
-
       return episodesObject
     }
   }, {})
