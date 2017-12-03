@@ -29,6 +29,7 @@
     "debug": "^3.1.0",
     "inquirer": "^3.3.0",
     "request-promise": "^4.2.2",
+    "string-similarity": "^1.2.0",
     "underscore": "^1.8.3",
     "x-ray": "^2.3.2"
   },

@@ -1,3 +1,4 @@
+import { compareTwoStrings } from 'string-similarity'
 import Xray from 'x-ray'
 
 const URL = 'https://eztv.ag/search'
@@ -12,15 +13,18 @@ function formatResults (results, query) {
   const episodes = results.reduce((episodesObject = {}, ep) => {
     const name = ep.name.toLowerCase()
     const regex = /(s\d{2,}e\d{2,})|(\d{1,}x\d{2,})/g
-    if (ep.episodeUrl.indexOf(query) < 0) return episodesObject
 
     if (regex.test(name)) {
-      const parsedName = name.match(regex)[0].split(/x|e/g)
+      const episodeDetails = name.match(regex)[0]
+      const showName = name.slice(0, name.indexOf(episodeDetails))
+
+      if (compareTwoStrings(showName, query.replace(/-/g, '')) < 0.4) return episodesObject
+
       const season = parseInt(
-        parsedName[0].replace('s', '')
+        episodeDetails.split(/x|e/g)[0].replace('s', '')
       )
       const episode = parseInt(
-        parsedName[1]
+        episodeDetails.split(/x|e/g)[1]
       )
 
       if (!episodesObject[season]) episodesObject[season] = {}
@@ -33,8 +37,9 @@ function formatResults (results, query) {
       }
 
       episodesObject[season][episode].torrents.push(ep)
-      return episodesObject
     }
+
+    return episodesObject
   }, {})
 
   return Object.keys(episodes).reduce((seasons, key) => {
