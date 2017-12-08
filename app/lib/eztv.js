@@ -17,8 +17,8 @@ function formatResults (results, query) {
     if (regex.test(name)) {
       const episodeDetails = name.match(regex)[0]
       const showName = name.slice(0, name.indexOf(episodeDetails))
-
-      if (compareTwoStrings(showName, query.replace(/-/g, '')) < 0.4) return episodesObject
+      
+      if (compareTwoStrings(showName, query.replace(/-/g, ' ')) < 0.8) return episodesObject
 
       const season = parseInt(
         episodeDetails.split(/x|e/g)[0].replace('s', '')
