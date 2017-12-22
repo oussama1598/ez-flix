@@ -16,9 +16,7 @@ function formatResults (results, query) {
 
     if (regex.test(name)) {
       const episodeDetails = name.match(regex)[0]
-      const showName = name.slice(0, name.indexOf(episodeDetails))
-
-      console.log(compareTwoStrings(showName, query.replace(/-/g, ' ')), showName)
+      const showName = name.slice(0, name.indexOf(episodeDetails)).trim()
 
       if (compareTwoStrings(showName, query.replace(/-/g, ' ')) < 0.6) return episodesObject
 
