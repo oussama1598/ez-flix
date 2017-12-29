@@ -1,0 +1,22 @@
+{
+    "search.exclude": {
+        "node_modules": true,
+        "public": true,
+        ".tmp": true,
+        ".sass-cache": true,
+        ".idea": true,
+        "dist": true,
+        "npm-debug.log": true,
+        "coverage": true
+    },
+    "files.exclude": {
+        "node_modules": true,
+        "public": true,
+        ".tmp": true,
+        ".sass-cache": true,
+        ".idea": true,
+        "dist": true,
+        "npm-debug.log": true,
+        "coverage": true
+    }
+}

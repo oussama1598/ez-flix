@@ -1,13 +1,24 @@
-import { compareTwoStrings } from 'string-similarity'
 import Xray from 'x-ray'
+import { compareTwoStrings } from 'string-similarity'
 
-const URL = 'https://eztv.ag/search'
+const API_URL = 'http://1337x.to/category-search/%query%/TV/1/'
+
 const x = Xray({
   filters: {
-    int: val => parseInt(val.replace(/,/g, '')),
+    parseInt: val => parseInt(val),
     trim: val => val.trim()
   }
 })
+
+function PromisifyXray (xInstance) {
+  return new Promise((resolve, reject) => {
+    xInstance((err, result) => {
+      if (err) return reject(err)
+
+      resolve(result)
+    })
+  })
+}
 
 function formatResults (results, query) {
   const episodes = results.reduce((episodesObject = {}, ep) => {
@@ -55,24 +66,37 @@ function formatResults (results, query) {
   }, {})
 }
 
-export function getEZTVData (query) {
-  return new Promise((resolve, reject) =>
-    x(`${URL}/${query}`, 'table.forum_header_border tr.forum_header_border', [{
-      episodeUrl: 'td:nth-child(2) a@href',
-      name: 'td:nth-child(2) | trim',
-      magnet: 'td:nth-child(3) a:nth-child(1)@href',
-      size: 'td:nth-child(4)',
-      seeds: 'td:nth-child(6) | int'
-    }])((err, result) => {
-      if (err) reject(err)
-
-      resolve(result)
-    })
+function search (query) {
+  const uri = API_URL.replace(
+    '%query%',
+    encodeURIComponent(query)
+  )
+  return PromisifyXray(
+    x(uri, '.search-page .table-list tbody tr', [{
+      torrent: '.name a:last-child@href',
+      name: '.name | trim'
+    }])
+      .paginate('.pagination .active + li a@href')
   )
 }
 
 export async function getEpisodes (query) {
-  const data = await getEZTVData(query)
+  const searchResult = await search(query)
 
-  return formatResults(data, query)
+  return formatResults(searchResult, query)
+}
+
+export function getTorrentData (torrentUri) {
+  try {
+    return PromisifyXray(
+      x(torrentUri, {
+        magnet: '.download-links-dontblock li:first-child a@href',
+        name: '.box-info-heading | trim',
+        seeds: '.seeds | parseInt',
+        size: '.torrent-category-detail .list li:nth-child(4) span'
+      })
+    )
+  } catch (err) {
+    return null
+  }
 }
