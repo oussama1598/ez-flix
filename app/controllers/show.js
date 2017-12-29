@@ -1,6 +1,6 @@
 import _ from 'underscore'
 import { searchForShow } from '../lib/tvshowsData'
-import { getEpisodes } from '../lib/eztv'
+import { getEpisodes, getTorrentData } from '../lib/1337x'
 import { addTorrent, getSession } from '../lib/transmission'
 import { prompt } from 'inquirer'
 import { parse } from 'url'
@@ -11,9 +11,14 @@ const DIR = process.cwd()
 
 async function filesPrompt (episodes, session) {
   for (const ep of episodes) {
-    const torrents = _.chain(ep.torrents)
-      .sortBy(ep => -ep.seeds)
-      .value()
+    let torrents = await Promise.all(
+      _.chain(ep.torrents)
+        .sortBy(ep => -ep.seeds)
+        .value()
+        .map(torrent => getTorrentData(torrent.torrent))
+    )
+
+    torrents = torrents.filter(torrent => torrent)
 
     if (torrents.length === 0) {
       warn(`Skipped episode ${ep.episode}, no torrents found`)
