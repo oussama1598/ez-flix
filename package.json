@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.36",
+    "app-module-path": "^2.2.0",
     "cheerio": "^1.0.0-rc.2",
     "commander": "^2.11.0",
     "console-error": "0.0.4",

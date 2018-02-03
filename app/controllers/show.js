@@ -1,58 +1,41 @@
 import _ from 'underscore'
-import { searchForShow } from '../lib/tvshowsData'
-import { getEpisodes, getTorrentData } from '../lib/1337x'
-import { addTorrent, getSession } from '../lib/transmission'
-import { prompt } from 'inquirer'
-import { parse } from 'url'
+import Transmission from 'modules/Transmission'
+import Show from 'modules/Show'
+import Prompt from 'modules/Prompt'
 import error from 'console-error'
 import warn from 'console-warn'
 
 const DIR = process.cwd()
+const transmission = new Transmission()
+const show = new Show()
+const prompt = new Prompt()
 
 async function filesPrompt (episodes, session) {
   for (const ep of episodes) {
-    let torrents = await Promise.all(
+    const torrents = await Promise.all(
       _.chain(ep.torrents)
         .sortBy(ep => -ep.seeds)
         .value()
-        .map(torrent => getTorrentData(torrent.torrent))
+        .map(torrent =>
+          show.getTorrentDataForEpisode(
+            torrent.torrent
+          )
+        )
+    ).then(result =>
+      result.filter(torrent => torrent)
     )
-
-    torrents = torrents.filter(torrent => torrent)
 
     if (torrents.length === 0) {
       warn(`Skipped episode ${ep.episode}, no torrents found`)
       continue
     }
 
-    const episodePrompt = await prompt({
-      type: 'list',
-      name: 'magnet',
-      message: 'Select a file: ',
-      choices: torrents.map(file => ({
-        name: `${file.name}, seeds: ${file.seeds}, size: ${file.size}`,
-        value: file.magnet
-      }))})
-
-    addTorrent(episodePrompt.magnet, DIR, session)
+    const torrentMagnet = await prompt.askForTorrent(torrents)
+    transmission.addTorrent(torrentMagnet, DIR)
   }
 }
 
-async function seasonsPrompt (seasons) {
-  const seasonPrompt = await prompt({
-    type: 'list',
-    name: 'season',
-    message: 'Seasons: ',
-    choices: Object.keys(seasons).map(season => ({
-      name: `season ${season}`,
-      value: season
-    }))
-  })
-
-  return seasonPrompt.season
-}
-
-export async function searchForEpisode (name, from, to = 'f', byPassSearch = false) {
+export async function searchForEpisode (name, from, to = 'f') {
   from = isNaN(from) && from !== 'latest' ? 1 : from
   to = isNaN(to) || to === 'f' || from === 'latest'
     ? Infinity
@@ -60,49 +43,24 @@ export async function searchForEpisode (name, from, to = 'f', byPassSearch = fal
 
   if (from === 'latest') warn('the \'-to\' argument will be ignored, since \'latest\' is used')
 
-  const session = await getSession()
+  try {
+    await transmission.load()
 
-  if (!session) return error('Transmission is not running')
+    const showName = name.replace(/ /g, '-')
+    await show.loadData(showName)
 
-  let showName = name.replace(/ /g, '-')
+    const seasonNumber = from === 'latest'
+      ? show.getLastSeasonNumber()
+      : await prompt.askForSeason(show.getSeasons())
 
-  if (!byPassSearch) {
-    const shows = await searchForShow(showName)
+    from = from === 'latest'
+      ? show.getLastEpisodeNumber()
+      : parseInt(from)
 
-    if (shows.length === 0) return error('No matches for this show')
-
-    const showsPrompt = await prompt({
-      type: 'list',
-      name: 'show',
-      message: 'Here is what i found',
-      choices: shows.slice(0, 5).map(show => ({
-        name: `${show.name.trim()} (${show.url})`,
-        value: parse(show.url).pathname.split('/')[2]
-      }))
-    })
-
-    showName = showsPrompt.show
+    await filesPrompt(
+      show.getRangeEpisodes(seasonNumber, from, to)
+    )
+  } catch (err) {
+    return error(err.message)
   }
-
-  const seasons = await getEpisodes(showName)
-
-  if (Object.keys(seasons).length === 0) return error('No data found for this show')
-
-  const chosenSeason = from === 'latest'
-    ? Object.keys(seasons).reduce((a, b) => parseInt(a) > parseInt(b) ? a : b, 0)
-    : await seasonsPrompt(seasons)
-  const season = seasons[chosenSeason]
-
-  from = from === 'latest'
-    ? season.reduce((a, b) => a.episode > b.episode ? a.episode : b.episode)
-    : parseInt(from)
-
-  const episodes = _.chain(season)
-    .sortBy('episodes')
-    .filter(ep => (
-      ep.episode >= from &&
-          ep.episode <= to
-    )).value()
-
-  await filesPrompt(episodes, session)
 }

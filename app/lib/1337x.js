@@ -10,6 +10,10 @@ const x = Xray({
   }
 })
 
+function torrentExist (episodes, name) {
+  return episodes.filter(el => el.name === name).length !== 0
+}
+
 function PromisifyXray (xInstance) {
   return new Promise((resolve, reject) => {
     xInstance((err, result) => {
@@ -47,7 +51,9 @@ function formatResults (results, query) {
         }
       }
 
-      episodesObject[season][episode].torrents.push(ep)
+      if (!torrentExist(episodesObject[season][episode].torrents, ep.name)) {
+        episodesObject[season][episode].torrents.push(ep)
+      }
     }
 
     return episodesObject
