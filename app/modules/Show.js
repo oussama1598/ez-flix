@@ -1,4 +1,4 @@
-import { getEpisodes, getTorrentData} from 'lib/1337x.js'
+import { getEpisodes } from 'lib/eztv'
 import _ from 'underscore'
 
 export default class Show {
@@ -35,9 +35,5 @@ export default class Show {
   getLastEpisodeNumber (seasonNumber) {
     return Object.keys(this.showsData[seasonNumber])
       .reduce((a, b) => a.episode > b.episode ? a.episode : b.episode, 0)
-  }
-
-  getTorrentDataForEpisode (torrentUrl) {
-    return getTorrentData(torrentUrl)
   }
 }

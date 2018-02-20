@@ -12,18 +12,9 @@ const prompt = new Prompt()
 
 async function filesPrompt (episodes, session) {
   for (const ep of episodes) {
-    const torrents = await Promise.all(
-      _.chain(ep.torrents)
-        .sortBy(ep => -ep.seeds)
-        .value()
-        .map(torrent =>
-          show.getTorrentDataForEpisode(
-            torrent.torrent
-          )
-        )
-    ).then(result =>
-      result.filter(torrent => torrent)
-    )
+    const torrents = _.chain(ep.torrents)
+      .sortBy(ep => -ep.seeds)
+      .value()
 
     if (torrents.length === 0) {
       warn(`Skipped episode ${ep.episode}, no torrents found`)
