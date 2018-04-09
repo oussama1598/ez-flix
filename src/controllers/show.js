@@ -36,6 +36,10 @@ export async function searchForEpisode(name, from, to = 'f') {
     warn("the '-to' argument will be ignored, since 'latest' is used");
 
   await utorrent.getToken();
+
+  await utorrent.addTorrent(
+    'magnet:?xt=urn:btih:532369FA74EFB335613FE244252467DD328D49B6&dn=Jumanji%3A+Welcome+to+the+Jungle+%282017%29+%5B720p%5D+%5BYTS.AG%5D&tr=udp%3A%2F%2Fglotorrents.pw%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fp4p.arenabg.ch%3A1337&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337'
+  );
   // try {
   //   await transmission.load();
 
