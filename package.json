@@ -21,10 +21,11 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^8.0.0-beta.0",
     "gulp-load-plugins": "^1.5.0",
+    "gulp-remove-code": "^2.0.1",
     "gulp-sourcemaps": "^2.6.2",
-    "run-sequence": "^2.2.0",
-    "gulp-babel": "^8.0.0-beta.0"
+    "run-sequence": "^2.2.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.36",
