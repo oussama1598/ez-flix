@@ -8,7 +8,7 @@ import warn from 'console-warn';
 
 const DIR = process.cwd();
 const transmission = new Transmission();
-const utorrent = new Utorrent('http://127.0.0.1:8888', 'admin', 'admin');
+const utorrent = new Utorrent('http://127.0.0.1:8888/gui', 'admin', 'admin');
 const show = new Show();
 const prompt = new Prompt();
 

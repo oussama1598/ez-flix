@@ -4,8 +4,8 @@ import cheerio from 'cheerio';
 export default class Utorrent {
   constructor(baseUrl, username, password) {
     this.baseUrl = baseUrl;
-    this.username = this.username;
-    this.password = this.password;
+    this.username = username;
+    this.password = password;
     this.token = null;
   }
 
