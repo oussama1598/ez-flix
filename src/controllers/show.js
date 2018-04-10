@@ -2,7 +2,6 @@ import _ from 'underscore';
 import Utorrent from 'modules/Utorrent';
 import Show from 'modules/Show';
 import Prompt from 'modules/Prompt';
-import error from 'console-error';
 import warn from 'console-warn';
 
 const DIR = process.cwd();
