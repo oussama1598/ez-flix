@@ -1,8 +1,8 @@
 import program from 'commander';
-import { searchForEpisode } from 'controllers/show';
+import searchForEpisode from 'controllers/show';
 import { version } from '../package.json';
 
-const parseINT = val => parseInt(val);
+const parseINT = val => parseInt(val, 10);
 
 program
   .version(version)
@@ -12,19 +12,17 @@ program
   .option('-n, --nosearch', 'Bypass traktv shows search')
   .parse(process.argv);
 
-(async function() {
-  if (!program.args.length) {
-    program.outputHelp();
-  } else {
-    try {
-      await searchForEpisode(
-        program.args[0],
-        program.from,
-        program.to,
-        program.nosearch
-      );
-    } catch (error) {
-      console.log(error);
-    }
+if (!program.args.length) {
+  program.outputHelp();
+} else {
+  try {
+    searchForEpisode(
+      program.args[0],
+      program.from,
+      program.to,
+      program.nosearch
+    );
+  } catch (error) {
+    console.log(error);
   }
-})();
+}
