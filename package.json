@@ -1,14 +1,26 @@
 {
   "name": "ezflix",
   "version": "2.1.1",
-  "description": "",
-  "main": "index.js",
+  "description":
+    "This app makes downloading your favourite tv shows easier than ever (for free)",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src",
-    "build": "gulp build"
+    "build": "gulp build",
+    "prepublish": "gulp build"
   },
-  "keywords": [],
-  "author": "Oussama Barkouki",
+  "keywords": ["tvshows", "tv", "ez", "flix", "ezflix", "netflix"],
+  "author": {
+    "name": "Oussama Barkouki",
+    "email": "oussama1598@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oussama1598/ezflix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oussama1598/ezflix/issues"
+  },
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.36",
@@ -51,5 +63,6 @@
   },
   "bin": {
     "ezflix": "index.js"
-  }
+  },
+  "files": ["dist"]
 }
