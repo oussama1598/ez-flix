@@ -1,31 +1,32 @@
-import request from 'request-promise'
-import cheerio from 'cheerio'
+import request from 'request-promise';
+import cheerio from 'cheerio';
 
 export default class Tranmission {
-  constructor () {
+  constructor() {
     // TODO: change this to work with config
-    this.RPC_URI = 'http://localhost:9091/transmission/rpc/'
-    this.id = null
+    this.RPC_URI = 'http://localhost:9091/transmission/rpc/';
+    this.id = null;
   }
 
-  async load () {
-    return this._getId()
+  async load() {
+    return this.getId();
   }
 
-  async _getId () {
+  async getId() {
     const res = await request({
       uri: this.RPC_URI,
       method: 'POST'
-    }).catch(res => res)
+    }).catch(resp => resp);
 
-    if (res.statusCode !== 409) return
+    if (res.statusCode !== 409) return;
 
-    this.id = cheerio.load(res.message)('code')
+    this.id = cheerio
+      .load(res.message)('code')
       .text()
-      .replace('X-Transmission-Session-Id: ', '')
+      .replace('X-Transmission-Session-Id: ', '');
   }
 
-  addTorrent (magnet, uri) {
+  addTorrent(magnet, uri) {
     return request({
       uri: this.RPC_URI,
       method: 'POST',
@@ -40,6 +41,6 @@ export default class Tranmission {
           paused: false
         }
       }
-    })
+    });
   }
 }
