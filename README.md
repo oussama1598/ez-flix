@@ -7,7 +7,7 @@ ez-flix is an application that's part of the 'ez' programs. This app makes downl
 Install via npm :
 
 ```bash
-npm install -g ez-flix
+npm install -g @oussama1598/ez-flix
 ```
 
 **Note** for linux you may have to use 'sudo'
