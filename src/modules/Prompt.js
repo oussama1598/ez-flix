@@ -1,7 +1,7 @@
-import { prompt } from 'inquirer'
+import { prompt } from 'inquirer';
 
 export default class Prompt {
-  askForSeason (seasons) {
+  static askForSeason(seasons) {
     return prompt({
       type: 'list',
       name: 'season',
@@ -10,10 +10,10 @@ export default class Prompt {
         name: `season ${season}`,
         value: season
       }))
-    }).then(result => result.season)
+    }).then(result => result.season);
   }
 
-  askForTorrent (torrents) {
+  static askForTorrent(torrents) {
     return prompt({
       type: 'list',
       name: 'magnet',
@@ -22,6 +22,6 @@ export default class Prompt {
         name: `${file.name}, seeds: ${file.seeds}, size: ${file.size}`,
         value: file.magnet
       }))
-    }).then(result => result.magnet)
+    }).then(result => result.magnet);
   }
 }

@@ -2,17 +2,21 @@ import request from 'request-promise';
 import cheerio from 'cheerio';
 
 export default class Tranmission {
-  constructor() {
-    // TODO: change this to work with config
-    this.RPC_URI = 'http://localhost:9091/transmission/rpc/';
+  constructor(options) {
+    this.options = Object.assign(
+      {
+        host: '127.0.0.1',
+        port: 9091
+      },
+      options
+    );
+    this.RPC_URI = `http://${this.options.host}:${
+      this.options.port
+    }/transmission/rpc/`;
     this.id = null;
   }
 
-  async load() {
-    return this.getId();
-  }
-
-  async getId() {
+  async getToken() {
     const res = await request({
       uri: this.RPC_URI,
       method: 'POST'

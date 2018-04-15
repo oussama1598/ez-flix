@@ -9,7 +9,7 @@ program
   .usage('[options] <name>')
   .option('-f, --from <n>', 'From a specific episode')
   .option('-t, --to <n>', 'To a specific episode', parseINT, 'f')
-  .option('-n, --nosearch', 'Bypass traktv shows search')
+  .option('-u, --utorrent', 'Use Utorrent instead of Transmission')
   .parse(process.argv);
 
 if (!program.args.length) {
@@ -20,7 +20,7 @@ if (!program.args.length) {
       program.args[0],
       program.from,
       program.to,
-      program.nosearch
+      program.utorrent
     );
   } catch (error) {
     console.log(error);

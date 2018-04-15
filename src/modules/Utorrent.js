@@ -3,10 +3,17 @@ import cheerio from 'cheerio';
 import { URL } from 'url';
 
 export default class Utorrent {
-  constructor(baseUrl, username, password) {
-    this.baseUrl = baseUrl;
-    this.username = username;
-    this.password = password;
+  constructor(options) {
+    this.options = Object.assign(
+      {
+        host: '127.0.0.1',
+        port: 8888,
+        username: 'admin',
+        password: 'admin'
+      },
+      options
+    );
+    this.baseUrl = `http://${this.options.host}:${this.options.port}/gui`;
     this.token = null;
     this.jar = jar();
   }
