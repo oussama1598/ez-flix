@@ -4,6 +4,7 @@ import Tranmission from 'modules/Transmission';
 import Show from 'modules/Show';
 import Prompt from 'modules/Prompt';
 import warn from 'console-warn';
+import info from 'console-info';
 
 const DIR = process.cwd();
 const utorrent = new Utorrent();
@@ -38,6 +39,10 @@ export default async function searchForEpisode(
       ? Infinity
       : _to;
   const torrentClient = useUtorrent ? utorrent : tranmission;
+
+  info(
+    `Using ${useUtorrent ? 'Utorrent' : 'Transmission'} as the torrent client`
+  );
 
   if (from === 'latest')
     warn("the '-to' argument will be ignored, since 'latest' is used");

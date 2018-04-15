@@ -16,16 +16,16 @@ export default class Utorrent {
     this.baseUrl = `http://${this.options.host}:${this.options.port}/gui`;
     this.token = null;
     this.jar = jar();
+
+    const { username: user, password: pass } = this.options;
+    this.auth = { user, pass };
   }
 
   async getToken() {
     const $ = await request({
       method: 'GET',
       uri: `${this.baseUrl}/token.html`,
-      auth: {
-        user: this.username,
-        pass: this.password
-      },
+      auth: this.auth,
       jar: this.jar,
       transform: body => cheerio.load(body)
     });
@@ -44,10 +44,7 @@ export default class Utorrent {
       method: 'GET',
       uri: uri.toString(),
       jar: this.jar,
-      auth: {
-        user: this.username,
-        pass: this.password
-      },
+      auth: this.auth,
       json: true
     });
   }
