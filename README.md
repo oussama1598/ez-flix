@@ -1,13 +1,13 @@
 # Introduction
 
-ezflix is an application that's part of the 'ez' programs. This app makes downloading your favourite tv shows easier than ever (for free)
+ez-flix is an application that's part of the 'ez' programs. This app makes downloading your favourite tv shows easier than ever (for free)
 
 ## Installation
 
 Install via npm :
 
 ```bash
-npm install -g ezflix
+npm install -g ez-flix
 ```
 
 **Note** for linux you may have to use 'sudo'
@@ -15,7 +15,7 @@ npm install -g ezflix
 ## Command-line usage
 
 ```bash
-ezflix [options] <name>
+ez-flix [options] <name>
 ```
 
 options:
@@ -34,7 +34,7 @@ options:
 Clone this repository locally :
 
 ```bash
-git clone https://github.com/oussama1598/ezflix.git
+git clone https://github.com/oussama1598/ez-flix.git
 ```
 
 Install dependencies with npm/yarn :
