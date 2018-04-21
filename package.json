@@ -1,6 +1,6 @@
 {
   "name": "@oussama1598/ez-flix",
-  "version": "2.1.1",
+  "version": "2.2.1",
   "description":
     "This app makes downloading your favourite tv shows easier than ever (for free)",
   "main": "dist/index.js",
@@ -54,6 +54,7 @@
     "console-info": "0.0.5",
     "console-warn": "0.0.4",
     "debug": "^3.1.0",
+    "flavors": "^3.3.1",
     "inquirer": "^3.3.0",
     "leetxapi": "^1.1.1",
     "request-promise": "^4.2.2",

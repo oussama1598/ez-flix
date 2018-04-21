@@ -6,3 +6,4 @@ public
 dist
 npm-debug.log
 coverage
+src/config/config.json

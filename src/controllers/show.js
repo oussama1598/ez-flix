@@ -5,10 +5,13 @@ import Show from 'modules/Show';
 import Prompt from 'modules/Prompt';
 import warn from 'console-warn';
 import info from 'console-info';
+import config from 'config';
+
+console.log(config);
 
 const DIR = process.cwd();
-const utorrent = new Utorrent();
-const tranmission = new Tranmission();
+const utorrent = new Utorrent(config.utorrentOptions);
+const tranmission = new Tranmission(config.tranmissionOptions);
 const show = new Show();
 
 async function filesPrompt(episodes, torrentClient) {
