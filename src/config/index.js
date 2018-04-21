@@ -9,7 +9,8 @@ const CONFIG_FULL_PATH = path.join(CONFIG_DIR, CONFIG_FILE);
 const defaultOptions = {
   transmissionOptions: {
     host: '127.0.0.1',
-    port: 9091
+    port: 9091,
+    useCwd: true
   },
   utorrentOptions: {
     host: '127.0.0.1',

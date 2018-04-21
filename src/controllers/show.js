@@ -21,7 +21,8 @@ async function filesPrompt(episodes, torrentClient) {
 
     if (torrents.length) {
       const torrentMagnet = await Prompt.askForTorrent(torrents);
-      await torrentClient.addTorrent(torrentMagnet, DIR);
+      const res = await torrentClient.addTorrent(torrentMagnet, DIR);
+      console.log(res);
     } else warn(`Skipped episode ${ep.episode}, no torrents found`);
   }
   /* eslint-enable no-restricted-syntax, no-await-in-loop */
