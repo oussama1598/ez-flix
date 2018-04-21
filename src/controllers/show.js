@@ -9,7 +9,7 @@ import config from 'config';
 
 const DIR = process.cwd();
 const utorrent = new Utorrent(config.utorrentOptions);
-const tranmission = new Tranmission(config.tranmissionOptions);
+const tranmission = new Tranmission(config.transmissionOptions);
 const show = new Show();
 
 async function filesPrompt(episodes, torrentClient) {
@@ -21,7 +21,7 @@ async function filesPrompt(episodes, torrentClient) {
 
     if (torrents.length) {
       const torrentMagnet = await Prompt.askForTorrent(torrents);
-      torrentClient.addTorrent(torrentMagnet, DIR);
+      await torrentClient.addTorrent(torrentMagnet, DIR);
     } else warn(`Skipped episode ${ep.episode}, no torrents found`);
   }
   /* eslint-enable no-restricted-syntax, no-await-in-loop */

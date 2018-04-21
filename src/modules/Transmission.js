@@ -3,6 +3,7 @@ import cheerio from 'cheerio';
 
 export default class Tranmission {
   constructor(options) {
+    console.log(options);
     this.options = Object.assign(
       {
         host: '127.0.0.1',
