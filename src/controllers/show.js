@@ -7,8 +7,6 @@ import warn from 'console-warn';
 import info from 'console-info';
 import config from 'config';
 
-console.log(config);
-
 const DIR = process.cwd();
 const utorrent = new Utorrent(config.utorrentOptions);
 const tranmission = new Tranmission(config.tranmissionOptions);
