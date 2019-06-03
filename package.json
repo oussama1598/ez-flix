@@ -1,15 +1,21 @@
 {
   "name": "@oussama1598/ez-flix",
   "version": "2.3.0",
-  "description":
-    "This app makes downloading your favourite tv shows easier than ever (for free)",
+  "description": "This app makes downloading your favourite tv shows easier than ever (for free)",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src",
     "build": "gulp build",
     "prepublish": "gulp build"
   },
-  "keywords": ["tvshows", "tv", "ez", "flix", "ez-flix", "netflix"],
+  "keywords": [
+    "tvshows",
+    "tv",
+    "ez",
+    "flix",
+    "ez-flix",
+    "netflix"
+  ],
   "author": {
     "name": "Oussama Barkouki",
     "email": "oussama1598@gmail.com"
@@ -55,7 +61,7 @@
     "console-warn": "0.0.4",
     "debug": "^3.1.0",
     "flavors": "^3.3.1",
-    "inquirer": "^3.3.0",
+    "inquirer": "^6.3.1",
     "leetxapi": "^1.1.1",
     "request-promise": "^4.2.2",
     "string-similarity": "^1.2.0",
@@ -65,5 +71,7 @@
   "bin": {
     "ez-flix": "index.js"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ]
 }
